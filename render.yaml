@@ -52,3 +52,24 @@ services:
         sync: false
       - key: BOOTSTRAP_ADMIN_PASSWORD
         sync: false
+
+  # Admin web portal (Next.js). Talks to the backend server-side via a proxy,
+  # so no CORS config is needed. Set API_BASE_URL to the backend's public URL.
+  - type: web
+    name: vehicle-survey-admin
+    runtime: docker
+    dockerfilePath: ./admin/Dockerfile
+    dockerContext: ./admin
+    plan: free
+    region: singapore
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: API_BASE_URL
+        value: https://vehicle-survey-backend.onrender.com/api/v1
+      - key: SESSION_COOKIE_MAX_AGE
+        value: "604800"
+      # Optional: client-side Google Maps key (embedded at build time).
+      - key: NEXT_PUBLIC_GOOGLE_MAPS_KEY
+        sync: false
