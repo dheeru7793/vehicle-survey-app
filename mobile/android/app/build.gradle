@@ -23,7 +23,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.example.vehicle_survey"
-    compileSdk 34
+    compileSdk 36
     ndkVersion flutter.ndkVersion
 
     compileOptions {

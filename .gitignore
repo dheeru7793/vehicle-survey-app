@@ -36,6 +36,7 @@ Thumbs.db
 *.swo
 
 # Flutter / Dart
+**/GeneratedPluginRegistrant.*
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
