@@ -1,0 +1,48 @@
+name: vehicle-survey
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    image: vehicle-survey-backend:dev
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    env_file:
+      - ../backend/.env
+    ports:
+      - "4000:4000"
+
+  admin:
+    build:
+      context: ../admin
+      dockerfile: Dockerfile
+    image: vehicle-survey-admin:dev
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      # The admin container talks to the backend over the docker network.
+      API_BASE_URL: http://backend:4000/api/v1
+      SESSION_COOKIE_MAX_AGE: 604800
+      NEXT_PUBLIC_GOOGLE_MAPS_KEY: ${NEXT_PUBLIC_GOOGLE_MAPS_KEY:-}
+    ports:
+      - "3001:3001"
+
+volumes:
+  mongo_data:
