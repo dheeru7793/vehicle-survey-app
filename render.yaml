@@ -1,0 +1,54 @@
+# Render Blueprint - deploys the backend API as a Docker web service.
+# Docs: https://render.com/docs/blueprint-spec
+#
+# After connecting this repo as a Blueprint in Render, you will be prompted to
+# fill in the env vars marked `sync: false` (the secrets). JWT_SECRET is
+# auto-generated. Render injects PORT automatically; the app reads it.
+#
+# Once deployed, open the service's "Shell" tab and run the one-time admin seed:
+#   node src/scripts/seedAdmin.js
+
+services:
+  - type: web
+    name: vehicle-survey-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: singapore
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: S3_SIGNED_URL_EXPIRES_SECONDS
+        value: "900"
+      - key: LOGIN_RATE_LIMIT_WINDOW_MS
+        value: "900000"
+      - key: LOGIN_RATE_LIMIT_MAX
+        value: "10"
+      - key: MAX_PHOTO_BYTES
+        value: "5242880"
+      - key: MAX_PHOTOS_PER_REQUEST
+        value: "20"
+      # --- Secrets / per-deployment values: set these in the Render dashboard ---
+      - key: MONGODB_URI
+        sync: false
+      - key: AWS_REGION
+        sync: false
+      - key: AWS_S3_BUCKET
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
