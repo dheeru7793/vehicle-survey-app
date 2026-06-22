@@ -1,4 +1,4 @@
-# Render Blueprint - deploys the backend API as a Docker web service.
+# Render Blueprint - deploys the backend API as a Node web service.
 # Docs: https://render.com/docs/blueprint-spec
 #
 # After connecting this repo as a Blueprint in Render, you will be prompted to
@@ -11,9 +11,10 @@
 services:
   - type: web
     name: vehicle-survey-backend
-    runtime: docker
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
     plan: free
     region: singapore
     healthCheckPath: /health
